@@ -9400,7 +9400,6 @@ Datasheet</description>
 <part name="GND1" library="SparkFun" deviceset="GND" device=""/>
 <part name="GND13" library="SparkFun" deviceset="GND" device=""/>
 <part name="P+4" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="+5V" device=""/>
-<part name="GND2" library="SparkFun" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -9534,9 +9533,6 @@ Datasheet</description>
 <instance part="P+4" gate="1" x="167.64" y="45.72" smashed="yes" rot="MR90">
 <attribute name="VALUE" x="170.18" y="45.72" size="1.27" layer="96" rot="MR270"/>
 </instance>
-<instance part="GND2" gate="1" x="77.47" y="119.38" smashed="yes" rot="R90">
-<attribute name="VALUE" x="80.01" y="116.84" size="1.27" layer="96" rot="R90"/>
-</instance>
 </instances>
 <busses>
 </busses>
@@ -9604,11 +9600,6 @@ Datasheet</description>
 <wire x1="151.13" y1="43.18" x2="157.48" y2="43.18" width="0.1524" layer="91"/>
 <pinref part="GND13" gate="1" pin="GND"/>
 <pinref part="U$5" gate="G$1" pin="GND2"/>
-</segment>
-<segment>
-<pinref part="GREEN" gate="G$1" pin="C"/>
-<pinref part="GND2" gate="1" pin="GND"/>
-<wire x1="71.12" y1="119.38" x2="74.93" y2="119.38" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="SDA_5V" class="0">
