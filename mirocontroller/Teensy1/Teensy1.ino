@@ -39,12 +39,12 @@ ros::NodeHandle nh;
 std_msgs::Float32 flFeedback, frFeedback, rlFeedback, rrFeedback, steeringFeedback, manualSteering, manualThrottle;
 volatile sensor_msgs::Imu imu_dat;
 volatile unsigned long steering_pwm = 0; //0.351564 degrees per microsecond
-volatile unsigned long reciever_esc_pwm = 0;
-volatile unsigned long reciever_servo_pwm = 0;
-unsigned long MIN_pwm = 0; //range of PWM is about 112 microseconds
-unsigned long MAX_pwm = 0;
+volatile unsigned long reciever_esc_pwm = 1512;
+volatile unsigned long reciever_servo_pwm = 1523;
+unsigned long MIN_pwm = 476; //range of PWM is about 112 microseconds
+unsigned long MAX_pwm = 581;
 unsigned long MIN_angle = 0;
-unsigned long MAX_angle = 0;
+unsigned long MAX_angle = 37;
 volatile unsigned long esc_micros = 0;
 volatile unsigned long servo_micros = 0;
 volatile unsigned long steering_micros = 0;
@@ -72,10 +72,11 @@ volatile sensors_event_t orientationData , angVelocityData , linearAccelData;
 void setup(){
   steer.attach(2);
   esc.attach(3);
+  //pinMode(14,INPUT_PULLDOWN);
+  //pinMode(15,INPUT_PULLDOWN);
+  //pinMode(23,INPUT_PULLDOWN);
   
-  attachInterrupt(14,rec_esc_isr,CHANGE); //reciever esc pwm
-  attachInterrupt(15,rec_servo_isr,CHANGE); //reciever servo pwm
-  attachInterrupt(23,steering_isr,CHANGE); //steering encoder pwm
+  
   if(!bno.begin())
   {
    //if not detected, infinite loop
@@ -99,20 +100,26 @@ void setup(){
   imu_dat.header.frame_id = "imu";
   /*************************/
   
+  
+
+  
+  attachInterrupt(23,steering_isr,CHANGE); //steering encoder pwm
+/*calibrate steering*/
+  steer.write(0);
+  delay(1000);
+  MIN_pwm = steering_pwm;
+  steer.write(180);
+  delay(1000);
+  MAX_pwm = steering_pwm;
+  compute_steering_parameters();
+  delay(100);
+
+  attachInterrupt(14,rec_esc_isr,CHANGE); //reciever esc pwm
+  attachInterrupt(15,rec_servo_isr,CHANGE); //reciever servo pwm
   /****Add Threads****/
   threads.addThread(imu_read);
   threads.addThread(vehicle_controller);
   /***********************/
-
-
-/*calibrate steering*/
-  steer.write(0);
-  MIN_pwm = steering_pwm;
-  delay(1000);
-  steer.write(0);
-  delay(1000);
-  MAX_pwm = steering_pwm;
-  compute_steering_parameters();
 }
 
 unsigned long startMillis; //used for timing of ros rate
@@ -130,11 +137,11 @@ void loop()
   pub_rl_feedback.publish(&rlFeedback);
   rrFeedback.data = rr.read();
   pub_rr_feedback.publish(&rrFeedback);
-  steeringFeedback.data = mapf(steering_pwm, MIN_pwm, MAX_pwm, MIN_angle, MAX_angle);
+  steeringFeedback.data = mapf(steering_pwm, MIN_pwm, MAX_pwm, -37, 37);
   pub_steering_feedback.publish(&steeringFeedback);
-  manualSteering.data = reciever_servo_pwm;
+  manualSteering.data = mapf(reciever_servo_pwm,1065,2006,0,100);
   pub_manual_steering_command.publish(&manualSteering);
-  manualThrottle.data = reciever_esc_pwm;
+  manualThrottle.data = mapf(reciever_esc_pwm,1065,2006,0,100);
   pub_manual_throttle_command.publish(&manualThrottle);
   imu_dat.orientation.x = orientationData.orientation.x;
   imu_dat.orientation.y = orientationData.orientation.y;
@@ -164,8 +171,7 @@ void moveCb(const ackermann_msgs::AckermannDriveStamped &msg){
 
 void compute_steering_parameters(){
   float range = abs(MAX_pwm - MIN_pwm)*0.351564;
-  range = range/2;
-  MIN_angle = -1*range;
+  MIN_angle = 0;
   MAX_angle = range;
 }
 void vehicle_controller(){
@@ -196,7 +202,7 @@ void rec_esc_isr(){
     esc_micros = micros();
   }else{
     if(esc_micros > 0){
-      if(micros() > esc_micros){
+      if(micros() > esc_micros && 1000 < (micros() - esc_micros) && 2010 > (micros() - esc_micros)){
         reciever_esc_pwm = micros() - esc_micros;
       }
     }
@@ -208,7 +214,7 @@ void rec_servo_isr(){
     servo_micros = micros();
   }else{
     if(servo_micros > 0){
-      if(micros() > servo_micros){
+      if(micros() > servo_micros && 1000 < (micros() - servo_micros) && 2010 > (micros() - servo_micros)){
         reciever_servo_pwm = micros() - servo_micros;
       }
     }
