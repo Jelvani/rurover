@@ -9,57 +9,104 @@
 #include <Adafruit_BNO055.h>
 #include <utility/imumaths.h>
 #include "TeensyThreads.h"
-#define PI 3.1415926535897932384626433832795
 #define USE_TEENSY_HW_SERIAL
-//ThreadWrap(Serial, SerialX);
-//#define Serial ThreadClone(SerialX)
-/**********Function Prototypes**************/
-void moveCb(const ackermann_msgs::AckermannDriveStamped &msg);
-void compute_steering_parameters();
-void vehicle_controller();
-void steering_read();
-void reciever_esc_read();
-void reciever_servo_read();
-void imu_read();
+
+/****PIN CONNECTION MACROS****/
+#define _SERVO 2
+#define _ESC 3
+#define _FL_A 5
+#define _FL_B 6
+#define _FR_A 7
+#define _FR_B 8
+#define _RL_A 9
+#define _RL_B 10
+#define _RR_A 11
+#define _RR_B 12
+#define _REC_SERVO 14
+#define _REC_ESC 15
+#define _STEER 23
+/*******Reciever PWM range macros*********/
+#define _REC_ESC_MIN 1065
+#define _REC_ESC_MAX 2006
+#define _REC_SERVO_MIN 1065
+#define _REC_SERVO_MAX 2006
+#define _ESC_NEUTRAL 1512
+#define _SERVO_NEUTRAL 1523
+
+
+ //TODO add service for switching to computer control
+
+
+/************STRUCT DEFINTIONS************/
+struct ros_message{ //contains all ROS messages
+  std_msgs::Float32 flFeedback;
+  std_msgs::Float32 frFeedback;
+  std_msgs::Float32 rlFeedback;
+  std_msgs::Float32 rrFeedback;
+  std_msgs::Float32 steeringFeedback;
+  std_msgs::Float32 manualSteering;
+  std_msgs::Float32 manualThrottle;
+  sensor_msgs::Imu imu_dat;
+};
+
+struct isr_variables{ //volatile variables changed by ISR's
+  volatile unsigned long steering_pwm; //current pwm width in microseconds for steering, 0.351564 degrees per microsecond
+  volatile unsigned long reciever_esc_pwm; //current pwm width in microseconds for reciever esc, 1512 neurtral
+  volatile unsigned long reciever_servo_pwm; //current pwm width in microseconds for reciever esc, 1523 neurtral
+  volatile unsigned long esc_micros;
+  volatile unsigned long servo_micros;
+  volatile unsigned long steering_micros;
+  volatile float steering_angle;
+  };
+
+struct steering_calibration_parameters{ //PWM parameters for absolute steering sensor, calculated on startup or on service call
+  unsigned int MIN_pwm; // typically 476 microseconds, range of PWM is about 112 microseconds
+  unsigned int MAX_pwm; //typically 581 microseconds
+  float MIN_angle;
+  float MAX_angle; //typically 37 degrees
+};
+
+struct thread_ids{
+  int imu;
+  int manual_controller;
+  int computer_controller;
+};
+/************ENUM DEFINTIONS************/
+enum drive_mode {manual, computer, neutral};
+/*********PROTOTYPES**************/
 float mapf(float x, float in_min, float in_max, float out_min, float out_max);
 void steering_isr();
 void rec_servo_isr();
 void rec_esc_isr();
- /***********************************/
- //TODO add service for switching to computer control
+void imu_read();
+void computer_controller();
+void manual_controller();
+void moveCb(const ackermann_msgs::AckermannDriveStamped &msg);
+void calibrate_steering();
+void set_drive_mode(enum drive_mode);
  /************VARIABLES********************/
-Encoder fl(5, 6);
-Encoder fr(7, 8);
-Encoder rl(9, 10);
-Encoder rr(11, 12);
-
+Encoder fl(_FL_A, _FL_B);
+Encoder fr(_FR_A, _FR_B);
+Encoder rl(_RL_A, _RL_B);
+Encoder rr(_RR_A, _RR_B);
 Servo esc;
 Servo steer;
 ros::NodeHandle nh;
-std_msgs::Float32 flFeedback, frFeedback, rlFeedback, rrFeedback, steeringFeedback, manualSteering, manualThrottle;
-volatile sensor_msgs::Imu imu_dat;
-volatile unsigned long steering_pwm = 0; //0.351564 degrees per microsecond
-volatile unsigned long reciever_esc_pwm = 1512;
-volatile unsigned long reciever_servo_pwm = 1523;
-unsigned long MIN_pwm = 476; //range of PWM is about 112 microseconds
-unsigned long MAX_pwm = 581;
-unsigned long MIN_angle = 0;
-unsigned long MAX_angle = 37;
-volatile unsigned long esc_micros = 0;
-volatile unsigned long servo_micros = 0;
-volatile unsigned long steering_micros = 0;
-volatile float steering_angle = 0;
 
-bool manual_control = true;
+struct ros_message ros_msgs;
+struct isr_variables isr_vars;
+struct steering_calibration_parameters steering_calab_params;
+struct thread_ids t_id;
+enum drive_mode mode = manual;
 
-ros::Publisher pub_fl_feedback("truck/feedback/wheel/fl", &flFeedback);
-ros::Publisher pub_fr_feedback("truck/feedback/wheel/fr", &frFeedback);
-ros::Publisher pub_rl_feedback("truck/feedback/wheel/rl", &rlFeedback);
-ros::Publisher pub_rr_feedback("truck/feedback/wheel/rr", &rrFeedback);
-ros::Publisher pub_steering_feedback("truck/feedback/steering", &steeringFeedback);
-ros::Publisher pub_manual_steering_command("truck/manual/steering", &manualSteering);
-ros::Publisher pub_manual_throttle_command("truck/manual/throttle", &manualThrottle);
-ros::Publisher pub_imu("truck/imu/data", &imu_dat);
+ros::Publisher pub_fl_feedback("truck/feedback/wheel/fl", &ros_msgs.flFeedback);
+ros::Publisher pub_fr_feedback("truck/feedback/wheel/fr", &ros_msgs.frFeedback);
+ros::Publisher pub_rl_feedback("truck/feedback/wheel/rl", &ros_msgs.rlFeedback);
+ros::Publisher pub_rr_feedback("truck/feedback/wheel/rr", &ros_msgs.rrFeedback);
+ros::Publisher pub_steering_feedback("truck/feedback/steering", &ros_msgs.steeringFeedback);
+ros::Publisher pub_manual_steering_command("truck/manual/steering", &ros_msgs.manualSteering);
+ros::Publisher pub_manual_throttle_command("truck/manual/throttle", &ros_msgs.manualThrottle);
+ros::Publisher pub_imu("truck/imu/data", &ros_msgs.imu_dat);
 
 ros::Subscriber<ackermann_msgs::AckermannDriveStamped> sub_command("truck/in/command", &moveCb); //statically allocated for rosserial using templates
 
@@ -70,20 +117,16 @@ volatile sensors_event_t orientationData , angVelocityData , linearAccelData;
 
 
 void setup(){
-  steer.attach(2);
-  esc.attach(3);
-  //pinMode(14,INPUT_PULLDOWN);
-  //pinMode(15,INPUT_PULLDOWN);
-  //pinMode(23,INPUT_PULLDOWN);
+  steer.attach(_SERVO);
+  esc.attach(_ESC);
   
+  steer.writeMicroseconds(_SERVO_NEUTRAL); //send neutral commands for safety
+  esc.writeMicroseconds(_ESC_NEUTRAL);
   
-  if(!bno.begin())
-  {
-   //if not detected, infinite loop
-    while(1);
-  }
-  delay(1000);//wait for imu
-  //nh.getHardware()->setBaud(256000);
+  attachInterrupt(_STEER,steering_isr,CHANGE); //steering encoder pwm
+  attachInterrupt(_REC_ESC,rec_esc_isr,CHANGE); //reciever esc pwm
+  attachInterrupt(_REC_SERVO,rec_servo_isr,CHANGE); //reciever servo pwm
+  
   nh.initNode();
   nh.advertise(pub_fl_feedback);
   nh.advertise(pub_fr_feedback);
@@ -95,100 +138,154 @@ void setup(){
   nh.advertise(pub_imu);
   nh.subscribe(sub_command);
 
+  
   /*****IMU Stuff***********/
-  bno.setExtCrystalUse(true);
-  imu_dat.header.frame_id = "imu";
-  /*************************/
-  
-  
-
-  
-  attachInterrupt(23,steering_isr,CHANGE); //steering encoder pwm
-/*calibrate steering*/
-  steer.write(0);
-  delay(1000);
-  MIN_pwm = steering_pwm;
-  steer.write(180);
-  delay(1000);
-  MAX_pwm = steering_pwm;
-  compute_steering_parameters();
-  delay(100);
-
-  attachInterrupt(14,rec_esc_isr,CHANGE); //reciever esc pwm
-  attachInterrupt(15,rec_servo_isr,CHANGE); //reciever servo pwm
+  if(bno.begin()){
+    delay(1000);//wait for imu
+    bno.setExtCrystalUse(true);
+    t_id.imu = threads.addThread(imu_read);
+    nh.loginfo("Connection to IMU established");
+  }else{
+    //if not detected, give error and continue
+    nh.logerror("IMU not deteced, proceeding without IMU");
+  } 
+  ros_msgs.imu_dat.header.frame_id = "base_link";
   /****Add Threads****/
-  threads.addThread(imu_read);
-  threads.addThread(vehicle_controller);
+  t_id.manual_controller = threads.addThread(manual_controller);
   /***********************/
+  calibrate_steering();
 }
 
 unsigned long startMillis; //used for timing of ros rate
 unsigned long currentMillis;
 int delaytime;
+unsigned long steering_pwm_copy;
+unsigned long rec_esc_pwm_copy;
+unsigned long rec_servo_pwm_copy;
 
 void loop()
 {
   startMillis=millis();
-  flFeedback.data = fl.read();
-  pub_fl_feedback.publish(&flFeedback);
-  frFeedback.data = fr.read();
-  pub_fr_feedback.publish(&frFeedback);
-  rlFeedback.data = rl.read();
-  pub_rl_feedback.publish(&rlFeedback);
-  rrFeedback.data = rr.read();
-  pub_rr_feedback.publish(&rrFeedback);
-  steeringFeedback.data = mapf(steering_pwm, MIN_pwm, MAX_pwm, -37, 37);
-  pub_steering_feedback.publish(&steeringFeedback);
-  manualSteering.data = mapf(reciever_servo_pwm,1065,2006,0,100);
-  pub_manual_steering_command.publish(&manualSteering);
-  manualThrottle.data = mapf(reciever_esc_pwm,1065,2006,0,100);
-  pub_manual_throttle_command.publish(&manualThrottle);
-  imu_dat.orientation.x = orientationData.orientation.x;
-  imu_dat.orientation.y = orientationData.orientation.y;
-  imu_dat.orientation.z = orientationData.orientation.z;
-  imu_dat.angular_velocity.x = angVelocityData.gyro.x;
-  imu_dat.angular_velocity.y = angVelocityData.gyro.y;
-  imu_dat.angular_velocity.z = angVelocityData.gyro.z;
-  imu_dat.linear_acceleration.x = linearAccelData.acceleration.x;
-  imu_dat.linear_acceleration.y = linearAccelData.acceleration.y;
-  imu_dat.linear_acceleration.z = linearAccelData.acceleration.z;
-  imu_dat.header.stamp = nh.now();
-  pub_imu.publish(&imu_dat);//slows down serial, comment for debugging
+  ros_msgs.flFeedback.data = fl.read();
+  pub_fl_feedback.publish(&ros_msgs.flFeedback);
+  ros_msgs.frFeedback.data = fr.read();
+  pub_fr_feedback.publish(&ros_msgs.frFeedback);
+  ros_msgs.rlFeedback.data = rl.read();
+  pub_rl_feedback.publish(&ros_msgs.rlFeedback);
+  ros_msgs.rrFeedback.data = rr.read();
+  pub_rr_feedback.publish(&ros_msgs.rrFeedback);
+
+  noInterrupts();//disable interrupts for copying ISR shared variables
+  steering_pwm_copy = isr_vars.steering_pwm;
+  rec_esc_pwm_copy = isr_vars.reciever_esc_pwm;
+  rec_servo_pwm_copy = isr_vars.reciever_servo_pwm;
+  interrupts();
+  ros_msgs.steeringFeedback.data = mapf(steering_pwm_copy, steering_calab_params.MIN_pwm, steering_calab_params.MAX_pwm, steering_calab_params.MIN_angle, steering_calab_params.MAX_angle); //outputs angle in degrees of steering, center being 0
+  ros_msgs.manualSteering.data = mapf(rec_esc_pwm_copy,_REC_SERVO_MIN,_REC_SERVO_MAX,-1,1);//outputs throttle percetange from -1 to 1
+  ros_msgs.manualThrottle.data = mapf(rec_servo_pwm_copy,_REC_ESC_MIN,_REC_ESC_MAX,-1,1);
+  
+  
+  pub_steering_feedback.publish(&ros_msgs.steeringFeedback);
+  pub_manual_steering_command.publish(&ros_msgs.manualSteering);
+  pub_manual_throttle_command.publish(&ros_msgs.manualThrottle);
+
+  
+  ros_msgs.imu_dat.orientation.x = orientationData.orientation.x;
+  ros_msgs.imu_dat.orientation.y = orientationData.orientation.y;
+  ros_msgs.imu_dat.orientation.z = orientationData.orientation.z;
+  ros_msgs.imu_dat.angular_velocity.x = angVelocityData.gyro.x;
+  ros_msgs.imu_dat.angular_velocity.y = angVelocityData.gyro.y;
+  ros_msgs.imu_dat.angular_velocity.z = angVelocityData.gyro.z;
+  ros_msgs.imu_dat.linear_acceleration.x = linearAccelData.acceleration.x;
+  ros_msgs.imu_dat.linear_acceleration.y = linearAccelData.acceleration.y;
+  ros_msgs.imu_dat.linear_acceleration.z = linearAccelData.acceleration.z;
+  ros_msgs.imu_dat.header.stamp = nh.now();
+  pub_imu.publish(&ros_msgs.imu_dat);//slows down serial, comment for debugging
   nh.spinOnce();
   currentMillis=millis();
   currentMillis=currentMillis-startMillis;
   delaytime=10-currentMillis-1;
   if(delaytime<0) delaytime=0;
   threads.delay(delaytime);
-  
 }
 
 void moveCb(const ackermann_msgs::AckermannDriveStamped &msg){
-  if(!manual_control){
-    steering_angle = msg.drive.steering_angle;
-    }
+
 }
 
-void compute_steering_parameters(){
-  float range = abs(MAX_pwm - MIN_pwm)*0.351564;
-  MIN_angle = 0;
-  MAX_angle = range;
-}
-void vehicle_controller(){
+void calibrate_steering(){
+  enum drive_mode prev = mode;
+  set_drive_mode(neutral); //nothing else sending commands to esc and servo
+  threads.delay(1000);
+  nh.loginfo("Steering Calibration in Progress");
+  steer.write(0);
+  threads.delay(1000);
+  noInterrupts();
+  steering_calab_params.MIN_pwm = isr_vars.reciever_servo_pwm; //get min pwm reading
+  interrupts();
+  steer.write(180);
+  threads.delay(1000);
+  noInterrupts();
+  steering_calab_params.MAX_pwm = isr_vars.reciever_servo_pwm; //get max pwm reading
+  interrupts();
+
+  float rangeAngle = abs(steering_calab_params.MIN_pwm - steering_calab_params.MAX_pwm)*0.351564;
+  steering_calab_params.MAX_angle = rangeAngle/2;
+  steering_calab_params.MIN_angle = -rangeAngle/2;
+  set_drive_mode(prev);
+  nh.loginfo("Steering Calibration complete");
+  }
+void manual_controller(){
+  unsigned long esc_copy;
+  unsigned long servo_copy;
   while(1){
-  
-    if(manual_control){
-      steer.writeMicroseconds(reciever_servo_pwm);
-      esc.writeMicroseconds(reciever_esc_pwm);
-    }else{
-      
-    }
+    
+    noInterrupts();
+    servo_copy = isr_vars.reciever_servo_pwm;
+    esc_copy = isr_vars.reciever_esc_pwm;
+    interrupts();
+    steer.writeMicroseconds(servo_copy);
+    esc.writeMicroseconds(esc_copy);
+    
     threads.delay(10); //100 hz loop
   }
 }
 
+void computer_controller(){
+  while(1){
+      threads.delay(10); //100 hz loop
+  }
+}
 
-
+void set_drive_mode(enum drive_mode desired_mode){
+  switch(mode){
+    case manual:
+      threads.kill(t_id.manual_controller);
+      break;
+    case computer:
+      threads.kill(t_id.computer_controller);
+      break;
+    case neutral:
+      break;
+   }
+   
+   esc.writeMicroseconds(_ESC_NEUTRAL);
+   steer.writeMicroseconds(_SERVO_NEUTRAL);
+   
+   switch(desired_mode){
+    case manual:
+      mode = manual;
+      t_id.manual_controller = threads.addThread(manual_controller);
+      break;
+    case computer:
+      mode = computer;
+      t_id.computer_controller = threads.addThread(computer_controller);
+      break;
+    case neutral:
+      mode = neutral;
+      break;
+   }
+}
 void imu_read(){
   while(1){
     bno.getEvent(&orientationData, Adafruit_BNO055::VECTOR_EULER);
@@ -198,36 +295,36 @@ void imu_read(){
   }
 }
 void rec_esc_isr(){
-  if(digitalRead(14) == HIGH){
-    esc_micros = micros();
+  if(digitalRead(_REC_ESC) == HIGH){
+    isr_vars.esc_micros = micros();
   }else{
-    if(esc_micros > 0){
-      if(micros() > esc_micros && 1000 < (micros() - esc_micros) && 2010 > (micros() - esc_micros)){
-        reciever_esc_pwm = micros() - esc_micros;
+    if(isr_vars.esc_micros > 0){
+      if(micros() > isr_vars.esc_micros && 1000 < (micros() - isr_vars.esc_micros) && 2010 > (micros() - isr_vars.esc_micros)){
+        isr_vars.reciever_esc_pwm = micros() - isr_vars.esc_micros;
       }
     }
   }
 }
 
 void rec_servo_isr(){
-  if(digitalRead(15) == HIGH){
-    servo_micros = micros();
+  if(digitalRead(_REC_SERVO) == HIGH){
+    isr_vars.servo_micros = micros();
   }else{
-    if(servo_micros > 0){
-      if(micros() > servo_micros && 1000 < (micros() - servo_micros) && 2010 > (micros() - servo_micros)){
-        reciever_servo_pwm = micros() - servo_micros;
+    if(isr_vars.servo_micros > 0){
+      if(micros() > isr_vars.servo_micros && 1000 < (micros() - isr_vars.servo_micros) && 2010 > (micros() - isr_vars.servo_micros)){
+        isr_vars.reciever_servo_pwm = micros() - isr_vars.servo_micros;
       }
     }
   }
 }
 
 void steering_isr(){
-  if(digitalRead(23) == HIGH){
-    steering_micros = micros();
+  if(digitalRead(_STEER) == HIGH){
+    isr_vars.steering_micros = micros();
   }else{
-    if(steering_micros > 0){
-      if(micros() > steering_micros){
-        steering_pwm = micros() - steering_micros;
+    if(isr_vars.steering_micros > 0){
+      if(micros() > isr_vars.steering_micros){
+        isr_vars.steering_pwm = micros() - isr_vars.steering_micros;
       }
     }
   }
