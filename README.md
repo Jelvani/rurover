@@ -1,6 +1,6 @@
 # Rutgers Rover (RURover) User Guide (Under Develpoment)
 
-RURover is an unmaned-ground-vehicke (UGV) based on the [Traxxas X-Maxx 8s](https://traxxas.com/products/landing/x-maxx/), that has been modified with the addition of wheel encoders and a steering sensor, and an on-board embedded system.
+RURover is an unmaned-ground-vehicke (UGV) based on the [Traxxas X-Maxx 8s](https://traxxas.com/products/landing/x-maxx/), that has been modified with the addition of wheel encoders, steering sensor, and an on-board embedded system.
 
 ## Hardware
 ***
