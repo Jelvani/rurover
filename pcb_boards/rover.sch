@@ -7891,87 +7891,6 @@ Source: http://www.osram.convergy.de/</description>
 </deviceset>
 </devicesets>
 </library>
-<library name="linear" urn="urn:adsk.eagle:library:262">
-<description>&lt;b&gt;Linear Devices&lt;/b&gt;&lt;p&gt;
-Operational amplifiers,  comparators, voltage regulators, ADCs, DACs, etc.&lt;p&gt;
-&lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;</description>
-<packages>
-<package name="SOT223" urn="urn:adsk.eagle:footprint:28484/1" library_version="7">
-<description>&lt;b&gt;Small Outline Transistor&lt;/b&gt;</description>
-<wire x1="3.2766" y1="1.778" x2="3.2766" y2="-1.778" width="0.2032" layer="21"/>
-<wire x1="3.2766" y1="-1.778" x2="-3.2766" y2="-1.778" width="0.2032" layer="21"/>
-<wire x1="-3.2766" y1="-1.778" x2="-3.2766" y2="1.778" width="0.2032" layer="21"/>
-<wire x1="-3.2766" y1="1.778" x2="3.2766" y2="1.778" width="0.2032" layer="21"/>
-<smd name="1" x="-2.3114" y="-3.0988" dx="1.2192" dy="2.2352" layer="1"/>
-<smd name="2" x="0" y="-3.0988" dx="1.2192" dy="2.2352" layer="1"/>
-<smd name="3" x="2.3114" y="-3.0988" dx="1.2192" dy="2.2352" layer="1"/>
-<smd name="4" x="0" y="3.099" dx="3.6" dy="2.2" layer="1"/>
-<text x="1.0208" y="-4.318" size="0.8128" layer="21" ratio="12">3</text>
-<text x="1.905" y="2.54" size="0.8128" layer="21" ratio="12">4</text>
-<text x="-3.4526" y="-4.318" size="0.8128" layer="21" ratio="12">1</text>
-<text x="-1.2906" y="-4.3274" size="0.8128" layer="21" ratio="12">2</text>
-<text x="-2.54" y="0.0508" size="1.27" layer="25">&gt;NAME</text>
-<text x="-2.54" y="-1.3208" size="1.27" layer="27">&gt;VALUE</text>
-<rectangle x1="-1.6002" y1="1.8034" x2="1.6002" y2="3.6576" layer="51"/>
-<rectangle x1="-0.4318" y1="-3.6576" x2="0.4318" y2="-1.8034" layer="51"/>
-<rectangle x1="-2.7432" y1="-3.6576" x2="-1.8796" y2="-1.8034" layer="51"/>
-<rectangle x1="1.8796" y1="-3.6576" x2="2.7432" y2="-1.8034" layer="51"/>
-<rectangle x1="-1.6002" y1="1.8034" x2="1.6002" y2="3.6576" layer="51"/>
-<rectangle x1="-0.4318" y1="-3.6576" x2="0.4318" y2="-1.8034" layer="51"/>
-<rectangle x1="-2.7432" y1="-3.6576" x2="-1.8796" y2="-1.8034" layer="51"/>
-<rectangle x1="1.8796" y1="-3.6576" x2="2.7432" y2="-1.8034" layer="51"/>
-</package>
-</packages>
-<packages3d>
-<package3d name="SOT223" urn="urn:adsk.eagle:package:28541/2" type="model" library_version="7">
-<description>Small Outline Transistor</description>
-<packageinstances>
-<packageinstance name="SOT223"/>
-</packageinstances>
-</package3d>
-</packages3d>
-<symbols>
-<symbol name="VREG-O2" urn="urn:adsk.eagle:symbol:16276/1" library_version="7">
-<wire x1="-5.08" y1="6.35" x2="7.62" y2="6.35" width="0.254" layer="94"/>
-<wire x1="7.62" y1="6.35" x2="7.62" y2="-2.54" width="0.254" layer="94"/>
-<wire x1="7.62" y1="-2.54" x2="-5.08" y2="-2.54" width="0.254" layer="94"/>
-<wire x1="-5.08" y1="-2.54" x2="-5.08" y2="6.35" width="0.254" layer="94"/>
-<text x="-5.08" y="7.62" size="1.778" layer="95">&gt;NAME</text>
-<text x="3.81" y="-5.08" size="1.778" layer="96">&gt;VALUE</text>
-<pin name="GND/ADJ" x="0" y="-5.08" visible="pad" length="short" direction="in" rot="R90"/>
-<pin name="IN" x="-7.62" y="5.08" length="short" direction="in"/>
-<pin name="OUT" x="10.16" y="5.08" length="short" direction="pas" rot="R180"/>
-<pin name="OUT@1" x="10.16" y="2.54" visible="pad" length="short" direction="pas" rot="R180"/>
-</symbol>
-</symbols>
-<devicesets>
-<deviceset name="MC33269ST*" urn="urn:adsk.eagle:component:16676/4" prefix="IC" library_version="7">
-<description>&lt;b&gt;Adjustable Output Low Dropout Voltage Regulator&lt;/b&gt; 800 mA&lt;p&gt;
-Source: http://www.onsemi.com/pub/Collateral/MC33269-D.PDF</description>
-<gates>
-<gate name="G$1" symbol="VREG-O2" x="0" y="0"/>
-</gates>
-<devices>
-<device name="" package="SOT223">
-<connects>
-<connect gate="G$1" pin="GND/ADJ" pad="1"/>
-<connect gate="G$1" pin="IN" pad="3"/>
-<connect gate="G$1" pin="OUT" pad="4"/>
-<connect gate="G$1" pin="OUT@1" pad="2"/>
-</connects>
-<package3dinstances>
-<package3dinstance package3d_urn="urn:adsk.eagle:package:28541/2"/>
-</package3dinstances>
-<technologies>
-<technology name="-3.3T3">
-<attribute name="POPULARITY" value="22" constant="no"/>
-</technology>
-</technologies>
-</device>
-</devices>
-</deviceset>
-</devicesets>
-</library>
 <library name="SparkFun-Switches" urn="urn:adsk.eagle:library:535">
 <description>&lt;h3&gt;SparkFun Switches, Buttons, Encoders&lt;/h3&gt;
 In this library you'll find switches, buttons, joysticks, and anything that moves to create or disrupt an electrical connection.
@@ -9462,6 +9381,110 @@ Number of pins: &lt;b&gt;4&lt;/b&gt;&lt;b&gt;&lt;P&gt;
 </deviceset>
 </devicesets>
 </library>
+<library name="lm2937">
+<description>&lt;center&gt; &lt;h1&gt; &lt;font color="red"&gt;
+VOLTAGE REGULATOR
+		&lt;/font&gt; &lt;font color="black"&gt;    &amp;nbsp  -  &amp;nbsp  &lt;/font&gt; &lt;font color="blue"&gt;
+NATIONAL SEMICONDUCTOR
+		&lt;/font&gt; &lt;/h1&gt;&lt;/center&gt;  &lt;center&gt; &lt;font color="darkgreen"&gt; &lt;h2&gt;
+400 and 500 mA  Dropout Voltage Regulator
+		 &lt;/h2&gt; &lt;/font&gt; &lt;/center&gt; &lt;hr&gt;&lt;center&gt; &lt;author&gt;created by &lt;a href="mailto:Reter.Hofmann@ph-tronic.de"&gt;Peter.Hofmann@ph-tronic.de&lt;/a&gt;&lt;/author&gt;&lt;/center&gt;&lt;center&gt;
+10-2004 Rev. 0
+		&lt;/center&gt;&lt;hr&gt;Based on the following source: &lt;ul&gt;&lt;li&gt;&lt;a href="http://www.national.com"&gt;www.national.com&lt;/a&gt;&lt;/ul&gt;&lt;hr&gt;
+		&lt;b&gt;DESCRIPTION&lt;/b&gt;&lt;p&gt;
+The LM2937 is a positive voltage regulator capable of supplying up to 500 mA of load current. The use of a PNP power transistor provides a low dropout voltage characteristic. With a load current of 500 mA the minimum input to output voltage differential required for the output to remain in regulation is typically 0.5V (1V guaranteed maximum over the full operating temperature range). Special circuitry has been incorporated to minimize the quiescent current to typically only 10 mA with a full 500 mA load current when the input to output voltage differential is greater than 3V.
+&lt;p&gt;
+The LM2937 requires an output bypass capacitor for stability. As with most low dropout regulators, the ESR of this capacitor remains a critical design parameter, but the LM2937 includes special compensation circuitry that relaxes ESR requirements. The LM2937 is stable for all ESR below 3Ohm. This allows the use of low ESR chip capacitors.
+&lt;p&gt;
+Ideally suited for automotive applications, the LM2937 will protect itself and any load circuitry from reverse battery connections, two-battery jumps and up to +60V/-50V load dump transients. Familiar regulator features such as short circuit and thermal shutdown protection are also built in.
+&lt;p&gt;&lt;p&gt;
+&lt;b&gt;KEY FEATURES&lt;/b&gt;&lt;p&gt;
+&lt;ul&gt;
+&lt;li&gt; Fully specified for operation over -40°C to +125°C 
+&lt;li&gt;Output current in excess of 500 mA 
+&lt;li&gt;Output trimmed for 5% tolerance under all operating conditions 
+&lt;li&gt;Typical dropout voltage of 0.5V at full rated load current 
+&lt;li&gt;Wide output capacitor ESR range, up to 3Ohm 
+&lt;li&gt;Internal short circuit and thermal overload protection 
+&lt;li&gt;Reverse battery protection 
+&lt;li&gt;60V input transient protection 
+&lt;li&gt;Mirror image insertion protection</description>
+<packages>
+<package name="SOT223">
+<description>&lt;b&gt;SOT-223&lt;/b&gt;</description>
+<wire x1="3.277" y1="1.778" x2="3.277" y2="-1.778" width="0.1998" layer="21"/>
+<wire x1="3.277" y1="-1.778" x2="-3.277" y2="-1.778" width="0.1998" layer="21"/>
+<wire x1="-3.277" y1="-1.778" x2="-3.277" y2="1.778" width="0.1998" layer="21"/>
+<wire x1="-3.277" y1="1.778" x2="3.277" y2="1.778" width="0.1998" layer="21"/>
+<smd name="IN" x="-2.311" y="-3.099" dx="1.219" dy="2.235" layer="1"/>
+<smd name="GND" x="0" y="-3.099" dx="1.219" dy="2.235" layer="1"/>
+<smd name="OUT" x="2.311" y="-3.099" dx="1.219" dy="2.235" layer="1"/>
+<smd name="GND@" x="0" y="3.099" dx="3.6" dy="2.2" layer="1"/>
+<text x="1.905" y="2.54" size="0.8128" layer="21" ratio="12">4</text>
+<text x="-2.54" y="0.0508" size="1.27" layer="25">&gt;NAME</text>
+<text x="-2.54" y="-1.3208" size="1.27" layer="27">&gt;VALUE</text>
+<rectangle x1="-1.6002" y1="1.8034" x2="1.6002" y2="3.6576" layer="51"/>
+<rectangle x1="-0.4318" y1="-3.6576" x2="0.4318" y2="-1.8034" layer="51"/>
+<rectangle x1="-2.7432" y1="-3.6576" x2="-1.8796" y2="-1.8034" layer="51"/>
+<rectangle x1="1.8796" y1="-3.6576" x2="2.7432" y2="-1.8034" layer="51"/>
+<rectangle x1="-1.6002" y1="1.8034" x2="1.6002" y2="3.6576" layer="51"/>
+<rectangle x1="-0.4318" y1="-3.6576" x2="0.4318" y2="-1.8034" layer="51"/>
+<rectangle x1="-2.7432" y1="-3.6576" x2="-1.8796" y2="-1.8034" layer="51"/>
+<rectangle x1="1.8796" y1="-3.6576" x2="2.7432" y2="-1.8034" layer="51"/>
+</package>
+</packages>
+<symbols>
+<symbol name="LM2937">
+<wire x1="-7.62" y1="5.08" x2="-7.62" y2="-5.08" width="0.4064" layer="94"/>
+<wire x1="-7.62" y1="-5.08" x2="7.62" y2="-5.08" width="0.4064" layer="94"/>
+<wire x1="7.62" y1="-5.08" x2="7.62" y2="5.08" width="0.4064" layer="94"/>
+<wire x1="7.62" y1="5.08" x2="-7.62" y2="5.08" width="0.4064" layer="94"/>
+<text x="7.62" y="7.62" size="1.778" layer="95" rot="R180">&gt;NAME</text>
+<text x="-7.62" y="-7.62" size="1.778" layer="96">&gt;VALUE</text>
+<pin name="IN" x="-12.7" y="2.54" length="middle" direction="in"/>
+<pin name="OUT" x="12.7" y="2.54" length="middle" direction="out" rot="R180"/>
+<pin name="GND" x="12.7" y="-2.54" length="middle" direction="pwr" rot="R180"/>
+</symbol>
+<symbol name="GND">
+<text x="1.27" y="2.54" size="1.778" layer="95">&gt;NAME</text>
+<pin name="GND@" x="0" y="0" visible="pad" length="middle" direction="pwr" rot="R90"/>
+</symbol>
+</symbols>
+<devicesets>
+<deviceset name="LM2937IMP-*" prefix="IC">
+<description>&lt;font color="red"&gt;&lt;h2&gt;
+ 400 and 500 mA Low Dropout Voltage Regulator
+	&lt;/h2&gt;&lt;/font&gt;&lt;font color="blue"&gt;&lt;h1&gt;
+NATIONAL SEMICONDUCTOR
+	&lt;/h1&gt;&lt;hr&gt;&lt;/font&gt;&lt;p&gt;&lt;author&gt;created by &lt;a href="mailto:Reter.Hofmann@ph-tronic.de"&gt;Peter.Hofmann@ph-tronic.de&lt;/a&gt;&lt;/author&gt; &lt;p&gt;  
+10-2004 Rev.0
+	&lt;hr&gt;</description>
+<gates>
+<gate name="G$1" symbol="LM2937" x="0" y="0"/>
+<gate name="P" symbol="GND" x="25.4" y="0" addlevel="request"/>
+</gates>
+<devices>
+<device name="" package="SOT223">
+<connects>
+<connect gate="G$1" pin="GND" pad="GND"/>
+<connect gate="G$1" pin="IN" pad="IN"/>
+<connect gate="G$1" pin="OUT" pad="OUT"/>
+<connect gate="P" pin="GND@" pad="GND@"/>
+</connects>
+<technologies>
+<technology name="10"/>
+<technology name="12"/>
+<technology name="15"/>
+<technology name="2.5"/>
+<technology name="3.3"/>
+<technology name="5.0"/>
+<technology name="8.0"/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+</devicesets>
+</library>
 </libraries>
 <attributes>
 </attributes>
@@ -9473,7 +9496,6 @@ Number of pins: &lt;b&gt;4&lt;/b&gt;&lt;b&gt;&lt;P&gt;
 </classes>
 <parts>
 <part name="P+2" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="+5V" device=""/>
-<part name="GND4" library="SparkFun" deviceset="GND" device=""/>
 <part name="P+3" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="+5V" device=""/>
 <part name="GND5" library="SparkFun" deviceset="GND" device=""/>
 <part name="P+5" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="+5V" device=""/>
@@ -9489,19 +9511,14 @@ Number of pins: &lt;b&gt;4&lt;/b&gt;&lt;b&gt;&lt;P&gt;
 </part>
 <part name="P+8" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="+5V" device=""/>
 <part name="GND9" library="SparkFun" deviceset="GND" device=""/>
-<part name="IC1" library="linear" library_urn="urn:adsk.eagle:library:262" deviceset="MC33269ST*" device="" package3d_urn="urn:adsk.eagle:package:28541/2" technology="-3.3T3" value="MC33269ST-5.0T3">
-<attribute name="MF" value=""/>
-<attribute name="MPN" value=""/>
-<attribute name="OC_NEWARK" value="unknown"/>
-</part>
 <part name="GND10" library="SparkFun" deviceset="GND" device=""/>
-<part name="C1" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="C-US" device="C1206" package3d_urn="urn:adsk.eagle:package:6240335/1" value="47u">
+<part name="C1" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="C-US" device="C1206" package3d_urn="urn:adsk.eagle:package:6240335/1" value="0.1u">
 <attribute name="MF" value=""/>
 <attribute name="MPN" value=""/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="GND11" library="SparkFun" deviceset="GND" device=""/>
-<part name="C2" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="C-US" device="C1206" package3d_urn="urn:adsk.eagle:package:6240335/1" value="47u">
+<part name="C2" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="C-US" device="C1206" package3d_urn="urn:adsk.eagle:package:6240335/1" value="10u">
 <attribute name="MF" value=""/>
 <attribute name="MPN" value=""/>
 <attribute name="OC_NEWARK" value="unknown"/>
@@ -9558,6 +9575,7 @@ Number of pins: &lt;b&gt;4&lt;/b&gt;&lt;b&gt;&lt;P&gt;
 <part name="FL_ENC" library="Rembrandt Electronics - JST XH Connectors v1-0" deviceset="JST-XH-04-PIN" device="-LONG-PAD"/>
 <part name="RR_ENC" library="Rembrandt Electronics - JST XH Connectors v1-0" deviceset="JST-XH-04-PIN" device="-LONG-PAD"/>
 <part name="PWR_IN" library="Rembrandt Electronics - JST XH Connectors v1-0" deviceset="JST-XH-02-PIN" device="-LONG-PAD"/>
+<part name="IC1" library="lm2937" deviceset="LM2937IMP-*" device="" technology="5.0"/>
 </parts>
 <sheets>
 <sheet>
@@ -9576,11 +9594,8 @@ Number of pins: &lt;b&gt;4&lt;/b&gt;&lt;b&gt;&lt;P&gt;
 <text x="157.48" y="-43.18" size="1.778" layer="91">Designed by Alborz Jelvani</text>
 </plain>
 <instances>
-<instance part="P+2" gate="1" x="-7.62" y="106.68" smashed="yes" rot="R270">
-<attribute name="VALUE" x="-5.08" y="106.68" size="1.27" layer="96" rot="R90"/>
-</instance>
-<instance part="GND4" gate="1" x="-24.13" y="93.98" smashed="yes">
-<attribute name="VALUE" x="-26.67" y="91.44" size="1.27" layer="96"/>
+<instance part="P+2" gate="1" x="-2.54" y="109.22" smashed="yes" rot="R270">
+<attribute name="VALUE" x="0" y="109.22" size="1.27" layer="96" rot="R90"/>
 </instance>
 <instance part="P+3" gate="1" x="-76.2" y="43.18" smashed="yes" rot="R270">
 <attribute name="VALUE" x="-73.66" y="43.18" size="1.27" layer="96" rot="R90"/>
@@ -9619,13 +9634,6 @@ Number of pins: &lt;b&gt;4&lt;/b&gt;&lt;b&gt;&lt;P&gt;
 <instance part="GND9" gate="1" x="-72.39" y="55.88" smashed="yes" rot="R90">
 <attribute name="VALUE" x="-69.85" y="53.34" size="1.27" layer="96" rot="R90"/>
 </instance>
-<instance part="IC1" gate="G$1" x="-25.4" y="104.14" smashed="yes">
-<attribute name="NAME" x="-30.48" y="111.76" size="1.27" layer="95"/>
-<attribute name="VALUE" x="-21.59" y="99.06" size="1.27" layer="96"/>
-<attribute name="OC_NEWARK" x="-25.4" y="104.14" size="1.778" layer="96" display="off"/>
-<attribute name="MF" x="-25.4" y="104.14" size="1.778" layer="96" display="off"/>
-<attribute name="MPN" x="-25.4" y="104.14" size="1.778" layer="96" display="off"/>
-</instance>
 <instance part="GND10" gate="1" x="-36.83" y="106.68" smashed="yes" rot="MR270">
 <attribute name="VALUE" x="-34.29" y="109.22" size="1.27" layer="96" rot="MR270"/>
 </instance>
@@ -9639,15 +9647,15 @@ Number of pins: &lt;b&gt;4&lt;/b&gt;&lt;b&gt;&lt;P&gt;
 <instance part="GND11" gate="1" x="-29.21" y="124.46" smashed="yes" rot="R90">
 <attribute name="VALUE" x="-26.67" y="121.92" size="1.27" layer="96" rot="R90"/>
 </instance>
-<instance part="C2" gate="G$1" x="-10.16" y="114.3" smashed="yes" rot="R180">
-<attribute name="NAME" x="-11.176" y="113.665" size="1.27" layer="95" rot="R180"/>
-<attribute name="VALUE" x="-11.176" y="118.491" size="1.27" layer="96" rot="R180"/>
-<attribute name="OC_NEWARK" x="-10.16" y="114.3" size="1.778" layer="96" display="off"/>
-<attribute name="MF" x="-10.16" y="114.3" size="1.778" layer="96" display="off"/>
-<attribute name="MPN" x="-10.16" y="114.3" size="1.778" layer="96" display="off"/>
+<instance part="C2" gate="G$1" x="-2.54" y="99.06" smashed="yes" rot="R180">
+<attribute name="NAME" x="-3.556" y="98.425" size="1.27" layer="95" rot="R180"/>
+<attribute name="VALUE" x="-3.556" y="103.251" size="1.27" layer="96" rot="R180"/>
+<attribute name="OC_NEWARK" x="-2.54" y="99.06" size="1.778" layer="96" display="off"/>
+<attribute name="MF" x="-2.54" y="99.06" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="-2.54" y="99.06" size="1.778" layer="96" display="off"/>
 </instance>
-<instance part="GND12" gate="1" x="-3.81" y="121.92" smashed="yes" rot="R90">
-<attribute name="VALUE" x="-1.27" y="119.38" size="1.27" layer="96" rot="R90"/>
+<instance part="GND12" gate="1" x="3.81" y="93.98" smashed="yes">
+<attribute name="VALUE" x="1.27" y="91.44" size="1.27" layer="96"/>
 </instance>
 <instance part="S1" gate="1" x="-58.42" y="114.3" smashed="yes">
 <attribute name="NAME" x="-57.15" y="117.348" size="1.778" layer="95" font="vector" align="bottom-center"/>
@@ -9820,6 +9828,10 @@ Number of pins: &lt;b&gt;4&lt;/b&gt;&lt;b&gt;&lt;P&gt;
 <attribute name="NAME" x="-71.12" y="108.458" size="1.27" layer="95" rot="MR0"/>
 <attribute name="VALUE" x="-62.738" y="102.997" size="1.27" layer="96" rot="MR0"/>
 </instance>
+<instance part="IC1" gate="G$1" x="-20.32" y="106.68" smashed="yes">
+<attribute name="NAME" x="-12.7" y="114.3" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="-27.94" y="99.06" size="1.27" layer="96"/>
+</instance>
 </instances>
 <busses>
 </busses>
@@ -9851,12 +9863,6 @@ Number of pins: &lt;b&gt;4&lt;/b&gt;&lt;b&gt;&lt;P&gt;
 <pinref part="STEER_ENC" gate="-3" pin="S"/>
 </segment>
 <segment>
-<pinref part="IC1" gate="G$1" pin="GND/ADJ"/>
-<pinref part="GND4" gate="1" pin="GND"/>
-<wire x1="-25.4" y1="99.06" x2="-24.13" y2="99.06" width="0.1524" layer="91"/>
-<wire x1="-24.13" y1="99.06" x2="-24.13" y2="96.52" width="0.1524" layer="91"/>
-</segment>
-<segment>
 <pinref part="GND10" gate="1" pin="GND"/>
 <wire x1="-66.04" y1="106.68" x2="-39.37" y2="106.68" width="0.1524" layer="91"/>
 <pinref part="PWR_IN" gate="-2" pin="S"/>
@@ -9866,12 +9872,6 @@ Number of pins: &lt;b&gt;4&lt;/b&gt;&lt;b&gt;&lt;P&gt;
 <wire x1="-35.56" y1="121.92" x2="-35.56" y2="124.46" width="0.1524" layer="91"/>
 <pinref part="GND11" gate="1" pin="GND"/>
 <wire x1="-35.56" y1="124.46" x2="-31.75" y2="124.46" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="C2" gate="G$1" pin="2"/>
-<wire x1="-10.16" y1="119.38" x2="-10.16" y2="121.92" width="0.1524" layer="91"/>
-<pinref part="GND12" gate="1" pin="GND"/>
-<wire x1="-10.16" y1="121.92" x2="-6.35" y2="121.92" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="U$1" gate="G$1" pin="GND"/>
@@ -9907,6 +9907,11 @@ Number of pins: &lt;b&gt;4&lt;/b&gt;&lt;b&gt;&lt;P&gt;
 <pinref part="GND15" gate="1" pin="GND"/>
 <wire x1="-43.18" y1="5.08" x2="-39.37" y2="5.08" width="0.1524" layer="91"/>
 <pinref part="SERVO" gate="-2" pin="S"/>
+</segment>
+<segment>
+<pinref part="C2" gate="G$1" pin="1"/>
+<pinref part="GND12" gate="1" pin="GND"/>
+<wire x1="-2.54" y1="96.52" x2="3.81" y2="96.52" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="SDA_5V" class="0">
@@ -10116,20 +10121,6 @@ Number of pins: &lt;b&gt;4&lt;/b&gt;&lt;b&gt;&lt;P&gt;
 <pinref part="STEER_ENC" gate="-1" pin="S"/>
 </segment>
 <segment>
-<pinref part="IC1" gate="G$1" pin="OUT@1"/>
-<pinref part="P+2" gate="1" pin="+5V"/>
-<wire x1="-15.24" y1="106.68" x2="-12.7" y2="106.68" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="G$1" pin="OUT"/>
-<wire x1="-12.7" y1="106.68" x2="-10.16" y2="106.68" width="0.1524" layer="91"/>
-<wire x1="-15.24" y1="109.22" x2="-12.7" y2="109.22" width="0.1524" layer="91"/>
-<wire x1="-12.7" y1="109.22" x2="-12.7" y2="106.68" width="0.1524" layer="91"/>
-<junction x="-12.7" y="106.68"/>
-<pinref part="C2" gate="G$1" pin="1"/>
-<wire x1="-12.7" y1="109.22" x2="-12.7" y2="111.76" width="0.1524" layer="91"/>
-<wire x1="-12.7" y1="111.76" x2="-10.16" y2="111.76" width="0.1524" layer="91"/>
-<junction x="-12.7" y="109.22"/>
-</segment>
-<segment>
 <pinref part="P+9" gate="1" pin="+5V"/>
 <pinref part="R1" gate="G$1" pin="1"/>
 <wire x1="2.54" y1="68.58" x2="5.08" y2="68.58" width="0.1524" layer="91"/>
@@ -10144,16 +10135,10 @@ Number of pins: &lt;b&gt;4&lt;/b&gt;&lt;b&gt;&lt;P&gt;
 <wire x1="165.1" y1="45.72" x2="151.13" y2="45.72" width="0.1524" layer="91"/>
 <pinref part="U$5" gate="G$1" pin="VIN"/>
 </segment>
-</net>
-<net name="N$2" class="0">
 <segment>
-<pinref part="D1" gate="G$1" pin="C"/>
-<pinref part="IC1" gate="G$1" pin="IN"/>
-<wire x1="-38.1" y1="109.22" x2="-35.56" y2="109.22" width="0.1524" layer="91"/>
-<pinref part="C1" gate="G$1" pin="1"/>
-<wire x1="-35.56" y1="109.22" x2="-33.02" y2="109.22" width="0.1524" layer="91"/>
-<wire x1="-35.56" y1="114.3" x2="-35.56" y2="109.22" width="0.1524" layer="91"/>
-<junction x="-35.56" y="109.22"/>
+<pinref part="IC1" gate="G$1" pin="OUT"/>
+<pinref part="P+2" gate="1" pin="+5V"/>
+<wire x1="-7.62" y1="109.22" x2="-5.08" y2="109.22" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="PWRIN" class="0">
@@ -10261,6 +10246,24 @@ Number of pins: &lt;b&gt;4&lt;/b&gt;&lt;b&gt;&lt;P&gt;
 <wire x1="86.36" y1="-15.24" x2="175.26" y2="-15.24" width="0.1524" layer="91"/>
 <wire x1="175.26" y1="-15.24" x2="175.26" y2="66.04" width="0.1524" layer="91"/>
 <wire x1="175.26" y1="66.04" x2="86.36" y2="66.04" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$2" class="0">
+<segment>
+<pinref part="D1" gate="G$1" pin="C"/>
+<pinref part="IC1" gate="G$1" pin="IN"/>
+<wire x1="-38.1" y1="109.22" x2="-35.56" y2="109.22" width="0.1524" layer="91"/>
+<pinref part="C1" gate="G$1" pin="1"/>
+<wire x1="-35.56" y1="109.22" x2="-33.02" y2="109.22" width="0.1524" layer="91"/>
+<wire x1="-35.56" y1="114.3" x2="-35.56" y2="109.22" width="0.1524" layer="91"/>
+<junction x="-35.56" y="109.22"/>
+</segment>
+</net>
+<net name="N$9" class="0">
+<segment>
+<pinref part="IC1" gate="G$1" pin="GND"/>
+<pinref part="C2" gate="G$1" pin="2"/>
+<wire x1="-7.62" y1="104.14" x2="-2.54" y2="104.14" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
